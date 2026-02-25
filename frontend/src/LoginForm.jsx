@@ -4,6 +4,7 @@ const LoginForm = ({ setToken }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,6 +24,8 @@ const LoginForm = ({ setToken }) => {
             return;
         }
 
+        setLoading(true);
+
         try {
             const response = await fetch('http://localhost:3333/login', {
                 method: 'POST',
@@ -39,6 +42,8 @@ const LoginForm = ({ setToken }) => {
             }
         } catch (err) {
             setError('Server connection failed.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -61,7 +66,10 @@ const LoginForm = ({ setToken }) => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 {error && <p className="error-message">{error}</p>}
-                <button type="submit" className="login-button">Login</button>
+                <button type="submit" className="login-button" disabled={loading}>
+                    {loading ? <span className="button-spinner"></span> : null}
+                    {loading ? 'Logging in...' : 'Login'}
+                </button>
             </form>
         </div>
     );
